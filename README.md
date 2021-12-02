@@ -1,2 +1,1 @@
-# CapstoneDjangoRest
-Django REST API backend for Devcodecamp backend.
+backend for LHWebApp
