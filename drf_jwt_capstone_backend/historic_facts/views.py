@@ -14,9 +14,13 @@ from .serializers import HistorcFactSerializer
 @permission_classes([AllowAny])
 def get_facts(request):
     facts = HistoricFact.objects.all()
-    fact_city_param = request.query_params.get('city')
+    fact_city_param = request.query_params.get('city', None)
+    fact_id_param = request.query_params.get('id', None)
     if fact_city_param == None:
-        facts = HistoricFact.objects.all()
+        if fact_id_param == None:
+            facts = HistoricFact.objects.all()
+    elif fact_id_param != None:
+        facts = HistoricFact.objects.filter(id = fact_id_param)
     else:
         facts = HistoricFact.objects.filter(city = fact_city_param)
 
@@ -26,7 +30,6 @@ def get_facts(request):
 @api_view(['POST', 'GET'])
 @permission_classes([IsAuthenticated])
 def user_facts(request):
-
     if request.method == 'POST':
         serializer = HistorcFactSerializer(data = request.data)
         if serializer.is_valid():
@@ -38,31 +41,29 @@ def user_facts(request):
         serializer = HistorcFactSerializer(facts, many=True)
         return Response(serializer.data)
    
+@api_view(['GET'])
+@permission_classes([AllowAny])   
+def get_fact(request,pk):
+    fact = HistoricFact.objects.get(pk= pk)
+    serializer = HistorcFactSerializer(fact)
+    return Response(serializer.data)
 
-
-class factDetail(APIView):
-    def get_object(self,pk):
-        try:
-            return HistoricFact.objects.get(pk=pk)
-        except HistoricFact.DoesNotExist:
-            raise Http404
-
-    def get(self, pk):
-        fact = self.get_object(pk)
-        serializer= HistorcFactSerializer(fact)
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_fact(request,pk):
+    fact = HistoricFact.objects.get(pk=pk)
+    serializer = HistorcFactSerializer(fact, data = request.data)
+    if serializer.is_valid():
+        serializer.save()
         return Response(serializer.data)
+    return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
-    def put(self,request,pk):
-        fact = self.get_object(pk)
-        serializer = HistorcFactSerializer(fact, data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_fact(request,pk):
+    fact = HistoricFact.objects.get(pk=pk)
+    fact.delete()
+    return Response(status = status.HTTP_204_NO_CONTENT)
 
-    def delete(self,pk):
-        fact = self.get_object(pk)
-        fact.delete()
-        return Response(status = status.HTTP_204_NO_CONTENT)
 
 
