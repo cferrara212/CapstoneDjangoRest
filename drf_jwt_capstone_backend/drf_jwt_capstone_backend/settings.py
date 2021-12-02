@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'authentication.apps.AuthenticationConfig',
     'corsheaders',
+    'historic_facts.apps.HistoricFactsConfig'
 ]
 
 MIDDLEWARE = [
