@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http.response import Http404
+from django.http.response import Http404, HttpResponse
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -44,9 +44,12 @@ def user_facts(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])   
 def get_fact(request,pk):
-    fact = HistoricFact.objects.get(pk= pk)
-    serializer = HistorcFactSerializer(fact)
-    return Response(serializer.data)
+    try:
+        fact = HistoricFact.objects.get(pk= pk)
+        serializer = HistorcFactSerializer(fact)
+        return Response(serializer.data)
+    except:
+        return Response(status.HTTP_404_NOT_FOUND)
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])

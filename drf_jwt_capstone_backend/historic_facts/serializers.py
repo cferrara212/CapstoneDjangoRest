@@ -5,4 +5,4 @@ from .models import HistoricFact
 class HistorcFactSerializer(serializers.ModelSerializer):
     class Meta:
         model = HistoricFact
-        fields = ('user', 'name', 'street', 'city', 'zip', 'fact')
+        fields = ('user', 'name', 'state', 'street', 'city', 'zip', 'fact')
