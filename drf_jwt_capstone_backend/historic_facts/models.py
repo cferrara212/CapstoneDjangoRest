@@ -11,5 +11,3 @@ class HistoricFact(models.Model):
     street = models.CharField(max_length=100)
     zip = models.CharField(max_length=5)
     fact = models.CharField(max_length=300)
-    
-    
